@@ -749,9 +749,11 @@ if (!function_exists('array_key_value_exists')) {
 }
 
 if (!function_exists('array_value_exists')) {
+
     /**
      * whether has array_value
-     * @param mixed $key
+     *
+     * @param mixed $value
      * @param array|\Illuminate\Support\Collection $array
      * @return bool
      */
@@ -1203,8 +1205,12 @@ if (!function_exists('get_omitted_string')) {
      * if over string length. remove text, add "..."
      * @return string
      */
-    function get_omitted_string($text, $length = Define::GRID_MAX_LENGTH)
+    function get_omitted_string($text, $length = null)
     {
+        if (is_null($length)) {
+            $length = config('exment.grid_mat_length', Define::GRID_MAX_LENGTH);
+        }
+
         if (is_null($text)) {
             return $text;
         }
@@ -1738,13 +1744,13 @@ if (!function_exists('admin_exclusion_path')) {
     }
 
     if (!function_exists('unicode_decode')) {
+
         /**
          * Get admin exclusion url.
          * Ex. admin/data/testtable to data/testtable
          *
-         * @param string $path
-         *
-         * @return string
+         * @param string $str
+         * @return array|string|string[]|null
          */
         function unicode_decode($str)
         {
@@ -1760,9 +1766,8 @@ if (!function_exists('admin_exclusion_path')) {
          * Get admin exclusion url.
          * Ex. admin/data/testtable to data/testtable
          *
-         * @param string $path
-         *
-         * @return string
+         * @param string $str
+         * @return array|string|string[]|null
          */
         function unicode_encode($str)
         {

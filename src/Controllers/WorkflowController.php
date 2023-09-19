@@ -106,6 +106,7 @@ class WorkflowController extends AdminControllerBase
                 ))->render());
             }
 
+            /** @phpstan-ignore-next-line fix laravel-admin documentation */
             if ($actions->row->canActivate()) {
                 $actions->prepend((new Tools\ModalLink(
                     admin_urls('workflow', $actions->row->id, 'activateModal'),
@@ -304,6 +305,7 @@ class WorkflowController extends AdminControllerBase
         });
 
         $form->savedInTransaction(function (Form $form) {
+            /** @var Workflow $model */
             $model = $form->model();
 
             // get workflow_statuses and set completed fig
@@ -337,6 +339,7 @@ class WorkflowController extends AdminControllerBase
         });
 
         $form->saved(function (Form $form) {
+            /** @var Workflow $model */
             $model = $form->model();
 
             // redirect workflow action page
@@ -924,7 +927,9 @@ class WorkflowController extends AdminControllerBase
             "comment_type" => 'required',
         ]);
 
-        $isWorkflowTypeTable = $form->model()->workflow_type == WorkflowType::TABLE;
+        /** @var Workflow $model */
+        $model = $form->model();
+        $isWorkflowTypeTable = $model->workflow_type == WorkflowType::TABLE;
         $key_condition = $isWorkflowTypeTable ? "work_conditions" : "work_condition_select";
         $keys->put($key_condition, "required");
 
@@ -1179,7 +1184,7 @@ class WorkflowController extends AdminControllerBase
 
                 // filter setting
                 $hasManyTable = new ConditionHasManyTable($form, [
-                    'ajax' => admin_url("webapi/{$id}/filter-value"),
+                    'ajax' => admin_url("webapi/{$custom_table->table_name}/filter-value"),
                     'name' => "workflow_conditions_{$index}",
                     'linkage' => json_encode(['condition_key' => url_join($custom_table->table_name, 'filter-condition')]),
                     'targetOptions' => $custom_table->getColumnsSelectOptions([
