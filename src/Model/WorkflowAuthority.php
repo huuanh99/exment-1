@@ -12,6 +12,7 @@ use Exceedone\Exment\ConditionItems\ConditionItemBase;
  * @phpstan-consistent-constructor
  * @property mixed $related_id
  * @property mixed $related_type
+ * @property mixed $workflow_action_id
  * @method static \Illuminate\Database\Query\Builder insert(array $values)
  */
 class WorkflowAuthority extends ModelBase implements WorkflowAuthorityInterface

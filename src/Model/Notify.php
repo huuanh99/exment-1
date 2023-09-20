@@ -65,7 +65,7 @@ class Notify extends ModelBase
 
     public function custom_view(): BelongsTo
     {
-        if (isset($this->custom_view_id)) {
+        if (property_exists($this, 'custom_view_id')) {
             return $this->belongsTo(CustomView::class, 'custom_view_id');
         }
         return $this->belongsTo(CustomView::class, 'custom_view_id')->whereNotMatch();
@@ -604,7 +604,7 @@ class Notify extends ModelBase
 
         // get search service
         $query = $table->getValueQuery();
-        if (isset($this->custom_view_id)) {
+        if (property_exists($this, 'custom_view_id')) {
             $this->custom_view->setValueFilters($query);
             $service = $this->custom_view->getSearchService();
         } else {

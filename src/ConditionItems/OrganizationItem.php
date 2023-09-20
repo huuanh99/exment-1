@@ -83,7 +83,10 @@ class OrganizationItem extends ConditionDetailBase implements ConditionItemInter
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
         $ids = $targetUser->belong_organizations->pluck('id')->toArray();
-        return in_array($workflow_authority->related_id, $ids);
+        if(property_exists($workflow_authority, 'related_id')) {
+            return in_array($workflow_authority->related_id, $ids);
+        }
+        return false;
     }
 
     public static function setWorkflowConditionQuery($query, $tableName, $custom_table)

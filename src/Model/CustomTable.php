@@ -965,7 +965,9 @@ class CustomTable extends ModelBase implements Interfaces\TemplateImporterInterf
             return [];
         }
         // re-get updated_at value
-        $data_updated_at = $this->getValueQuery()->select(['updated_at'])->find($custom_value->id)->updated_at ?? null;
+        if(property_exists($this, 'getValueQuery')) {
+            $data_updated_at = $this->getValueQuery()->select(['updated_at'])->find($custom_value->id)->updated_at ?? null;
+        }
         if (!isset($data_updated_at)) {
             return [];
         }

@@ -82,7 +82,10 @@ class UserItem extends ConditionDetailBase implements ConditionItemInterface
      */
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
-        return $workflow_authority->related_id == $targetUser->id;
+        if(property_exists($workflow_authority, 'related_id')) {
+            return $workflow_authority->related_id == $targetUser->id;
+        }
+        return false;
     }
 
     public static function setWorkflowConditionQuery($query, $tableName, $custom_table)
