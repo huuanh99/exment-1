@@ -546,7 +546,7 @@ class LoginService
                 $stream = $socialiteProvider->getAvatar($custom_login_user->token);
             }
             // if user obj has avatar, download avatar.
-            elseif (isset($custom_login_user->avatar)) {
+            elseif (property_exists($custom_login_user, 'avatar')) {
                 $client = new \GuzzleHttp\Client();
                 $response = $client->request('GET', $custom_login_user->avatar, [
                     'http_errors' => false,

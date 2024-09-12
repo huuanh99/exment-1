@@ -130,7 +130,7 @@ trait RevisionableTrait
     */
     public function preSave()
     {
-        if (!isset($this->revisionEnabled) || $this->revisionEnabled) {
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled)) {
             // if there's no revisionEnabled. Or if there is, if it's true
 
             $this->originalData = $this->original;
@@ -185,7 +185,7 @@ trait RevisionableTrait
     public function postSave()
     {
         // get historyLimit
-        if (isset($this->historyLimit)) {
+        if (property_exists($this, 'historyLimit')) {
             $historyLimit = $this->historyLimit;
         }
         if (isset($historyLimit) && $this->revisionHistory()->count() >= $historyLimit) {
@@ -201,7 +201,7 @@ trait RevisionableTrait
 
         // check if the model already exists
         //if (((!isset($this->revisionEnabled) || $this->revisionEnabled) && $this->updating) && (!$LimitReached || $RevisionCleanup)) {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled) && (!$LimitReached || $RevisionCleanup)) {
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled) && (!$LimitReached || $RevisionCleanup)) {
             // if it does, it means we're updating
 
             $changes_to_record = $this->changedRevisionableFields();
@@ -239,12 +239,12 @@ trait RevisionableTrait
     {
         // Check if we should store creations in our revision history
         // Set this value to true in your model if you want to
-        if (empty($this->revisionCreationsEnabled)) {
+        if (property_exists($this, 'revisionCreationsEnabled') && empty($this->revisionCreationsEnabled)) {
             // We should not store creations.
             return false;
         }
 
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)) {
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled)) {
             $changes_to_record = $this->changedRevisionableFields();
 
             $revisions = array();
@@ -272,7 +272,7 @@ trait RevisionableTrait
      */
     public function postDelete()
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled)
             && $this->isSoftDelete()
         ) {
             if ($this->isRevisionable($this->getDeletedAtColumn())) {
@@ -315,7 +315,7 @@ trait RevisionableTrait
      */
     public function postForceDelete()
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled)
         ) {
             $changes_to_record = $this->changedRevisionableFields();
             $revisions = array();
@@ -332,7 +332,7 @@ trait RevisionableTrait
      */
     public function postRestore()
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
+        if ((!property_exists($this, 'revisionEnabled') || $this->revisionEnabled)
             && $this->isSoftDelete()
         ) {
             if ($this->isRevisionable($this->getDeletedAtColumn())) {
@@ -547,7 +547,7 @@ trait RevisionableTrait
      */
     public function getRevisionNullString()
     {
-        return isset($this->revisionNullString) ? $this->revisionNullString : 'nothing';
+        return property_exists($this, 'revisionNullString') ? $this->revisionNullString : 'nothing';
     }
 
     /**
@@ -560,7 +560,7 @@ trait RevisionableTrait
      */
     public function getRevisionUnknownString()
     {
-        return isset($this->revisionUnknownString) ? $this->revisionUnknownString : 'unknown';
+        return property_exists($this, 'revisionUnknownString') ? $this->revisionUnknownString : 'unknown';
     }
 
     /**

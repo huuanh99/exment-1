@@ -45,7 +45,9 @@ trait PluginEventTrait
             $this->notify = $options['notify'];
         }
         $this->isCreate = is_nullorempty($this->custom_value) || $this->custom_value->wasRecentlyCreated;
-        $this->isDelete = !is_nullorempty($this->custom_value) &&
-            (isset($this->custom_value->deleted_user_id) || isset($this->custom_value->deleted_at));
+        if (property_exists($this, 'isDelete')) {
+            $this->isDelete = !is_nullorempty($this->custom_value) &&
+                (property_exists($this->custom_value, 'deleted_user_id') || property_exists($this->custom_value, 'deleted_at'));
+        }
     }
 }

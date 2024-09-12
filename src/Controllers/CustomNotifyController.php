@@ -66,7 +66,7 @@ class CustomNotifyController extends AdminControllerTableBase
             if (isset($custom_table)) {
                 return $custom_table->table_view_name ?? null;
             }
-            if (isset($this->workflow_id)) {
+            if (property_exists($this, 'workflow_id')) {
                 return Workflow::getEloquent($this->workflow_id)->workflow_view_name ?? null;
             }
 

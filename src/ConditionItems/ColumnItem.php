@@ -162,26 +162,28 @@ class ColumnItem extends ConditionItemBase implements ConditionItemInterface
      */
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
-        $custom_column = CustomColumn::find($workflow_authority->related_id);
-        if (!ColumnType::isUserOrganization($custom_column->column_type)) {
-            return false;
-        }
-        $auth_values = array_get($custom_value, 'value.' . $custom_column->column_name);
-        if (is_null($auth_values)) {
-            return false;
-        }
-        if (!is_array($auth_values)) {
-            $auth_values = [$auth_values];
-        }
-
-        switch ($custom_column->column_type) {
-            case ColumnType::USER:
-                return in_array($targetUser->id, $auth_values);
-            case ColumnType::ORGANIZATION:
-                $ids = $targetUser->belong_organizations->pluck('id')->toArray();
-                return collect($auth_values)->contains(function ($auth_value) use ($ids) {
-                    return collect($ids)->contains($auth_value);
-                });
+        if(property_exists($workflow_authority, 'related_id')) {
+            $custom_column = CustomColumn::find($workflow_authority->related_id);
+            if (!ColumnType::isUserOrganization($custom_column->column_type)) {
+                return false;
+            }
+            $auth_values = array_get($custom_value, 'value.' . $custom_column->column_name);
+            if (is_null($auth_values)) {
+                return false;
+            }
+            if (!is_array($auth_values)) {
+                $auth_values = [$auth_values];
+            }
+    
+            switch ($custom_column->column_type) {
+                case ColumnType::USER:
+                    return in_array($targetUser->id, $auth_values);
+                case ColumnType::ORGANIZATION:
+                    $ids = $targetUser->belong_organizations->pluck('id')->toArray();
+                    return collect($auth_values)->contains(function ($auth_value) use ($ids) {
+                        return collect($ids)->contains($auth_value);
+                    });
+            }
         }
         return false;
     }

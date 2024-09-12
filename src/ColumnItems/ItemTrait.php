@@ -726,9 +726,9 @@ trait ItemTrait
         list($mark, $pureValue) = $this->getQueryMarkAndValue($mark, $value, $q, $options);
 
         $query = $this->custom_table->getValueQuery();
-
-        $query->whereOrIn($this->custom_column->getIndexColumnName(), $mark, $pureValue)->select('id');
-
+        if(property_exists($this, 'custom_column')) {
+            $query->whereOrIn($this->custom_column->getIndexColumnName(), $mark, $pureValue)->select('id');
+        }
         $query->take($takeCount);
 
         return [$query];
@@ -748,9 +748,13 @@ trait ItemTrait
         list($mark, $pureValue) = $this->getQueryMarkAndValue($mark, $value, $q);
 
         if (is_list($pureValue)) {
-            $query->orWhereIn($this->custom_column->getIndexColumnName(), toArray($pureValue));
+            if(property_exists($this, 'custom_column')) {
+                $query->orWhereIn($this->custom_column->getIndexColumnName(), toArray($pureValue));
+            }
         } else {
-            $query->orWhere($this->custom_column->getIndexColumnName(), $mark, $pureValue);
+            if(property_exists($this, 'custom_column')) {
+                $query->orWhere($this->custom_column->getIndexColumnName(), $mark, $pureValue);
+            }
         }
 
         return $this;

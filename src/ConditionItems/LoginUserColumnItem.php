@@ -107,26 +107,28 @@ class LoginUserColumnItem extends ColumnItem
      */
     public function hasAuthorityOld(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
-        $custom_column = CustomColumn::find($workflow_authority->related_id);
-        if (!ColumnType::isUserOrganization($custom_column->column_type)) {
-            return false;
-        }
-        $auth_values = array_get($custom_value, 'value.' . $custom_column->column_name);
-        if (is_null($auth_values)) {
-            return false;
-        }
-        if (!is_array($auth_values)) {
-            $auth_values = [$auth_values];
-        }
-
-        switch ($custom_column->column_type) {
-            case ColumnType::USER:
-                return in_array($targetUser->id, $auth_values);
-            case ColumnType::ORGANIZATION:
-                $ids = $targetUser->belong_organizations->pluck('id')->toArray();
-                return collect($auth_values)->contains(function ($auth_value) use ($ids) {
-                    return collect($ids)->contains($auth_value);
-                });
+        if(property_exists($workflow_authority, 'related_id')) {
+            $custom_column = CustomColumn::find($workflow_authority->related_id);
+            if (!ColumnType::isUserOrganization($custom_column->column_type)) {
+                return false;
+            }
+            $auth_values = array_get($custom_value, 'value.' . $custom_column->column_name);
+            if (is_null($auth_values)) {
+                return false;
+            }
+            if (!is_array($auth_values)) {
+                $auth_values = [$auth_values];
+            }
+    
+            switch ($custom_column->column_type) {
+                case ColumnType::USER:
+                    return in_array($targetUser->id, $auth_values);
+                case ColumnType::ORGANIZATION:
+                    $ids = $targetUser->belong_organizations->pluck('id')->toArray();
+                    return collect($auth_values)->contains(function ($auth_value) use ($ids) {
+                        return collect($ids)->contains($auth_value);
+                    });
+            }
         }
         return false;
     }
@@ -140,22 +142,23 @@ class LoginUserColumnItem extends ColumnItem
      */
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser): bool
     {
-        $custom_column = CustomColumn::getEloquent($workflow_authority->related_id);
-        $workflow_action = WorkflowAction::getEloquent($workflow_authority->workflow_action_id);
-
-        $userAndOrgs = static::getTargetUserAndOrg($custom_value, $workflow_action, $workflow_authority->related_id);
-
-        switch ($custom_column->column_type) {
-            case ColumnType::USER:
-                return collect(array_get($userAndOrgs, 'users', []))->contains(function ($auth_value) use ($targetUser) {
-                    return $auth_value == $targetUser->id;
-                });
-            case ColumnType::ORGANIZATION:
-                $ids = $targetUser->belong_organizations->pluck('id')->toArray();
-                return collect(array_get($userAndOrgs, 'organizations', []))->contains(function ($auth_value) use ($ids) {
-                    return collect($ids)->contains($auth_value);
-                });
+        if(property_exists($workflow_authority, 'related_id')) {
+            $custom_column = CustomColumn::getEloquent($workflow_authority->related_id);
+            $workflow_action = WorkflowAction::getEloquent($workflow_authority->workflow_action_id);
+            $userAndOrgs = static::getTargetUserAndOrg($custom_value, $workflow_action, $workflow_authority->related_id);
+            switch ($custom_column->column_type) {
+                case ColumnType::USER:
+                    return collect(array_get($userAndOrgs, 'users', []))->contains(function ($auth_value) use ($targetUser) {
+                        return $auth_value == $targetUser->id;
+                    });
+                case ColumnType::ORGANIZATION:
+                    $ids = $targetUser->belong_organizations->pluck('id')->toArray();
+                    return collect(array_get($userAndOrgs, 'organizations', []))->contains(function ($auth_value) use ($ids) {
+                        return collect($ids)->contains($auth_value);
+                    });
+            }
         }
+
         return false;
     }
 

@@ -79,6 +79,9 @@ class RoleGroupItem extends ConditionDetailBase implements ConditionItemInterfac
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
         $ids = $targetUser->belong_role_groups->pluck('id')->toArray();
-        return in_array($workflow_authority->related_id, $ids);
+        if(property_exists($workflow_authority, 'related_id')) {
+            return in_array($workflow_authority->related_id, $ids);
+        }
+        return false;
     }
 }

@@ -261,7 +261,7 @@ EOT;
      */
     protected function getHasManyCount()
     {
-        if (isset($this->count)) {
+        if (property_exists($this, 'count')) {
             return $this->count;
         }
 

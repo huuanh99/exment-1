@@ -108,7 +108,9 @@ abstract class FormOtherItem implements ItemInterface
 
     public function getCustomTable()
     {
-        return $this->custom_column->custom_table;
+        if(property_exists($this, 'custom_column')) {
+            return $this->custom_column->custom_table;
+        }
     }
 
     protected function getTargetValue($custom_value)

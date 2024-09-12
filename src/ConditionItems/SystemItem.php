@@ -52,7 +52,10 @@ class SystemItem extends ConditionItemBase implements ConditionItemInterface
      */
     public function hasAuthority(WorkflowAuthorityInterface $workflow_authority, ?CustomValue $custom_value, $targetUser)
     {
-        return $workflow_authority->related_id == WorkflowTargetSystem::CREATED_USER && $custom_value->created_user_id == $targetUser->id;
+        if(property_exists($workflow_authority, 'related_id')) {
+            return $workflow_authority->related_id == WorkflowTargetSystem::CREATED_USER && $custom_value->created_user_id == $targetUser->id;
+        }
+        return false;
     }
 
     public static function setWorkflowConditionQuery($query, $tableName, $custom_table)
