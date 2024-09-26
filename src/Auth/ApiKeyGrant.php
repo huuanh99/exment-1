@@ -16,6 +16,7 @@ use Exceedone\Exment\Enums\SystemTableName;
 
 class ApiKeyGrant extends AbstractGrant
 {
+
     /**
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
